@@ -1,33 +1,40 @@
 pipeline {
-  agent any
-  parameters {
-    name: 'ENVIRONMENT',
-    choices: ['staging','production'],
-    description: 'Choose deployment environment'
-  }
-  stages {
-    stage('Build') {
-      steps {
-        echo 'Building the application...'
-      }
+    agent any
+
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['staging', 'production'],
+            description: 'Choose deployment environment'
+        )
     }
-    stage('Test') {
-      steps {
-        echo 'Running tests...'
-      }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the application...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying to ${params.ENVIRONMENT}"
+            }
+        }
     }
-    stage('Deploy') {
-      steps {
-        echo "Deploying to ${params.ENVIRONMENT}"
-      }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
     }
-  }
-  post {
-    success {
-      echo 'Pipeline completed successfully!'
-    }
-    failure {
-      echo 'Pipeline failed!'
-    }
-  }
 }
